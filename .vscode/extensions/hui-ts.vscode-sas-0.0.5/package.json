@@ -1,0 +1,69 @@
+{
+	"name": "vscode-sas",
+	"displayName": "SAS",
+	"description": "Visual Studio Code SAS Syntax",
+	"version": "0.0.5",
+	"icon": "resources/image/icon/icon.png",
+	"publisher": "hui-ts",
+	"author": {
+		"name": "HUI TS"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hui-ts/vscode-sas"
+	},
+	"scripts": {
+		"yaml2json": "node .vscode/yaml2json.js"
+	},
+	"engines": {
+		"vscode": "^1.60.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "sas",
+				"aliases": [
+					"SAS",
+					"sas"
+				],
+				"extensions": [
+					".sas"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "sas",
+				"scopeName": "source.sas",
+				"path": "./syntaxes/sas.tmLanguage.json"
+			}
+		],
+		"themes": [
+			{
+				"label": "Dark+ (SAS)",
+				"uiTheme": "vs-dark",
+				"path": "./themes/dark_plus_sas.json"
+			}
+		]
+	},
+	"devDependencies": {
+		"js-yaml": "^4.1.0"
+	},
+	"__metadata": {
+		"id": "608c3814-be6d-4966-b3b0-df78bd8ca49a",
+		"publisherId": "03fe8fd1-ed4e-4a49-a618-0bc6b3d462b9",
+		"publisherDisplayName": "HTS",
+		"targetPlatform": "undefined",
+		"isApplicationScoped": false,
+		"isPreReleaseVersion": false,
+		"hasPreReleaseVersion": false,
+		"installedTimestamp": 1721246972376,
+		"pinned": false,
+		"preRelease": false,
+		"source": "gallery"
+	}
+}

@@ -1,0 +1,85 @@
+From e32d893ed4dcd77f3479a740e145e4b3d34da437 Mon Sep 17 00:00:00 2001
+From: tanchekwei <weiwei1@live.com.my>
+Date: Mon, 5 Feb 2024 16:27:33 +0800
+Subject: [PATCH 2/2] Add focusLeftSide config
+
+---
+ package.json     |  5 +++++
+ src/extension.ts | 28 ++++++++++++++--------------
+ 2 files changed, 19 insertions(+), 14 deletions(-)
+
+diff --git a/package.json b/package.json
+index 42643ea..41ea5af 100644
+--- a/package.json
++++ b/package.json
+@@ -35,6 +35,11 @@
+ 					"type": "boolean",
+ 					"default": false,
+ 					"markdownDescription": "Controls whether to close related tab after compare view tab / diff tab is closed."
++				},
++				"compareView.focusLeftSide": {
++					"type": "boolean",
++					"default": true,
++					"markdownDescription": "Set focus to the left side compare view automatically upon creation."
+ 				}
+ 			}
+ 		}
+diff --git a/src/extension.ts b/src/extension.ts
+index 7bc4f90..08a3622 100644
+--- a/src/extension.ts
++++ b/src/extension.ts
+@@ -20,6 +20,7 @@ const compareViewDiffTabLabelRegex = new RegExp(
+ );
+ let count: number = 0;
+ let closeRelatedTab: boolean = false;
++let focusLeftSide: boolean = false;
+ 
+ export function activate(context: ExtensionContext) {
+   context.subscriptions.push(
+@@ -31,7 +32,7 @@ export function activate(context: ExtensionContext) {
+   subscribeConfigChangedEvent();
+ }
+ 
+-const createCompareView = () => {
++const createCompareView = async () => {
+   let folderPath;
+   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
+     folderPath = workspace.workspaceFolders[0].uri.path;
+@@ -44,22 +45,21 @@ const createCompareView = () => {
+   const rightName = `${name}${++count}`;
+   const rightPath = join(folderPath, rightName);
+   const rightUri = Uri.parse(`${scheme}:${rightPath}`);
+-  window
+-    .showTextDocument(rightUri)
+-    .then(() =>
+-      commands.executeCommand(
+-        "vscode.diff",
+-        leftUri,
+-        rightUri,
+-        `${leftName}${arrow}${rightName}`
+-      )
+-    );
++  await commands.executeCommand(
++    "vscode.diff",
++    leftUri,
++    rightUri,
++    `${leftName}${arrow}${rightName}`
++  );
++  if (focusLeftSide) {
++    await commands.executeCommand("workbench.action.focusFirstSideEditor");
++  }
+ };
+ 
+ const setConfiguration = () => {
+-  closeRelatedTab = workspace
+-    .getConfiguration(section)
+-    .get("closeRelatedTab") as boolean;
++  const config = workspace.getConfiguration(section);
++  closeRelatedTab = config.get("closeRelatedTab") as boolean;
++  focusLeftSide = config.get("focusLeftSide") as boolean;
+ };
+ 
+ const subscribeConfigChangedEvent = () => {
+-- 
+2.33.0.windows.2
+

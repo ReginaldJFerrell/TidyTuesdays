@@ -1,0 +1,4 @@
+---
+1.0.1 hashie:>= 0,version_gem:~> 1.1|checksum:960ba7d9814b5a2ae645fea2b7bd2a673c58cbe74c52667b4de9d1d28e486d94,ruby:>= 2.2
+2.0.0 hashie:>= 0,version_gem:~> 1.1|checksum:fe8b2e39e8ff69320f7812af73ea06401579e29ff1734a7009567391600687de,ruby:>= 2.2
+2.0.1 hashie:>= 0,version_gem:>= 1.1.1&~> 1.1|checksum:1ac87ec157fcfe7a460e821e0cd48ae1e6f5e3e082ab520f03f31a9259dbdc31,ruby:>= 2.2

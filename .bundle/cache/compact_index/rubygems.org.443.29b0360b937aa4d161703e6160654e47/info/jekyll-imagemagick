@@ -1,0 +1,6 @@
+---
+1.1.7 fastimage:~> 2.1|checksum:dcf727be21a02f1eba1d35c02037c24e74367ec65443368df6f5aed91c974f23
+1.2.1 fastimage:~> 2.1|checksum:a739766dbb1715a13fb28075db82b01825d3ad08a88d8cb4470e624667ca03fb
+1.3.0 |checksum:29cf97292f3c58dc621eda38babe9b3982ca0bc7ec8cfc70287ef7ff617037f9
+1.3.1 |checksum:ccadf5b99fd85ef7e654040f511589f5e28e411f30fc69f1738fed1bcefb8a8f
+1.4.0 jekyll:>= 3.4|checksum:dcf4ae46ffbeabfac584a5256821e39fc5fae8d651fd5c4a56fef3a2061a7ef4
