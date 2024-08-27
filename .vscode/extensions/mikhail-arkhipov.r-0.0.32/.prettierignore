@@ -1,8 +1,0 @@
-*.json
-**/pyright/**/*.md
-**/dist/**
-**/out/**
-**/client/server/**
-**/extension/server/**
-**/typeshed-fallback/**
-**/bundled-stubs/**
