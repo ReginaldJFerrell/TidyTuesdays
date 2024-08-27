@@ -23,7 +23,7 @@ sports <- tuesdata$sports
 sports <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-03-29/sports.csv') 
 
 ##################
-#Summarise data 
+# Summarise Data 
 ##################
 
 #Total Revenue
@@ -95,5 +95,5 @@ rev_geo <- rev %>% left_join(geo,by="institution_name") %>% unique()
 exp_geo <- exp %>% left_join(geo,by="institution_name") %>% unique()
 
 ##################
-#Plot
+# Plot
 ##################
