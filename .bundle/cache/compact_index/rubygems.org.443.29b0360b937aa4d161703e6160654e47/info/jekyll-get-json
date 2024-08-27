@@ -1,4 +1,0 @@
----
-0.0.1 deep_merge:~> 1.2,jekyll:~> 3.0|checksum:86f5fe77ab63fb71472dedfd123992559a455e850f7e01dbfcadc9fd3e7f444e
-0.0.2 deep_merge:~> 1.2,jekyll:>= 3.0|checksum:5d21b469a73cbab806cae5612e67690c93f6c776503e710fa930534ce184d0f2
-1.0.0 deep_merge:~> 1.2,jekyll:>= 3.0|checksum:f6b076a93de9cace89a88617b494bea10e6dbb86331c293d663d37d9b9ae7522

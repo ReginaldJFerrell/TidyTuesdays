@@ -1,2 +1,0 @@
----
-BUNDLE_BUILD__LIBV8: "--with-system-v8"
