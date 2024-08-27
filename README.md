@@ -1,1 +1,1 @@
-Collection of some of my Tidy Tuesday projects 
+A collection of some of my Tidy Tuesday projects 
