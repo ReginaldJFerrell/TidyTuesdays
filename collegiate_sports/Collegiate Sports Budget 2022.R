@@ -8,7 +8,7 @@ packages <- c("haven", "ggplot2", "gapminder", "tidyverse", "dplyr", "stringr", 
 # invisible(lapply(packages, install.packages, character.only = TRUE))
 invisible(lapply(packages, library, character.only = TRUE))
 
-# Get the Data
+# Get the Data 
 
 # Read in with tidytuesdayR package 
 # Install from CRAN via: install.packages("tidytuesdayR")
@@ -78,7 +78,7 @@ transitions <- sports %>%
   unique() %>% 
   filter(classification_2015 =="Other") #Removing Other as original 
 
-#Register API
+#Register API - Removing for GitHub
 # sports_geo <- sports %>% 
 #   tidygeocoder::geocode(institution_name)
 
