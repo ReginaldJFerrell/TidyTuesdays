@@ -1,10 +1,9 @@
 # Get the Data
 #Load packages
 packages <- c("haven", "ggplot2", "gapminder", "tidyverse", "dplyr", "stringr", 
-              "tidyr", "devtools", "RODBC", "RColorBrewer", "foreign", "knitr", "markdown", 
-              "rmarkdown", "tinytex", "kableExtra", "stargazer", "xtable", "readxl", "tidyr", "reshape2",
+              "tidyr", "devtools", "RODBC", "RColorBrewer", "readxl", "reshape2",
               "lubridate", "viridis", "haven", "janitor", "wesanderson", "cowplot", "forcats", "ggrepel", 
-              "hrbrthemes", "ggalt", "scales", "psych", "corrplot", "gtools", "gapminder", "sf",
+              "hrbrthemes", "ggalt", "scales", "corrplot", "sf",
               "tigris", "censusapi","tmap", "tidycensus", "mapview","ggmap","lattice","leafpop",
               "maps","spData","magick","readxl","writexl","vroom","WriteXLS","openxlsx","fuzzyjoin",
               "tidytuesdayR")
@@ -14,53 +13,98 @@ invisible(lapply(packages, library, character.only = TRUE))
 ramen_ratings <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-04/ramen_ratings.csv")%>% 
   na.omit(stars)
 
-#Ranking by country
-ranking_country <- ramen_ratings %>% 
+############### Key Questions: 
+# 1. Where are highest ratings for Ramen? (country)
+# 2. Which Ramen is the most popular? (style/brand) -- just style
+#################
+
+#Number of ratings per country -- (limit by Median)
+
+#Ranking by country - Best 
+ranking_country <- ramen_ratings %>% mutate(response_count=1) %>% 
   group_by(country) %>% 
   summarise(avg_rating = mean(stars),
-         max_rating = max(stars),
-         min_rating = min(stars),
-         sd = sd(stars))
+          response_count = sum(response_count),
+          max = max(stars),
+          min = min(stars),
+          sd = sd(stars),
+          se = sd/sqrt(response_count),
+          ci = se*1.96) %>% ungroup %>% 
+#keeping values at the median to limit the data a bit
+  mutate(median = median(response_count)) %>% filter(response_count >= median) #Just keeping large response counts
+         #rating_category = ifelse(response_count >= median,"Large Respondent Pool","Low Respondent Pool")) #Respondent 
+universe <- unique(ranking_country$country)
 
+#####
+#Plot 1 (Pulled a few lines of code from https://casualinference.netlify.app/2019/06/04/tidytuesday-ramen-ratings/ for time's sake)
+#####
+plot_01 <- ranking_country %>% 
+  ggplot(aes(x = fct_reorder(country, avg_rating), y = avg_rating)) +
+  theme_minimal()+
+  geom_hline(aes(yintercept = mean(ramen_ratings$stars, na.rm = TRUE)), 
+             linetype = "dashed") +
+  geom_errorbar(aes(ymin = avg_rating - ci, ymax = avg_rating + ci, color = response_count), 
+                width = .2, size = .75) +
+  geom_point(aes(color = response_count), size = 4) + 
+  scale_y_continuous(limits=c(0, 5), breaks=c(0,1,2,3,4,5)) +
+  labs(title = "Ramen Ranking by Country",
+       subtitle = "(Limited to countries at or above median response threshold; N=11.5)",
+       caption = "Note: Error bars indicate 95% CIs,
+                  Dashed line indicates overall mean",
+       x = "Country",
+       y = "Average rating") +
+  theme(plot.title = element_text(face="bold",hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5 ))+
+  coord_flip()
+plot_01
 
+#Ranking style (filtered to high respondent countries)
+ranking_style <- ramen_ratings %>% filter(country %in% universe) %>% 
+  group_by(style) %>% 
+  summarise(avg_rating = mean(stars)) %>% 
+  mutate(avg_rating=round(avg_rating,2))
+#####
+#Plot 2
+#####
+plot_02 <- ggplot(ranking_style, aes(x=fct_reorder(style, -avg_rating), y=avg_rating)) + 
+  geom_bar(stat="identity", width=.6,fill="steelblue") + 
+  geom_text(aes(label=avg_rating),
+            position = position_stack(vjust = 1.1))+
+  theme_minimal()+
+  labs(title="Preferred Ramen Serving Style", 
+       subtitle="(Limited to countries at or above median response threshold; N=11.5)", 
+       x = "Serving Style Category",
+       y = "Average Rating") + 
+  theme(plot.title = element_text(face="bold",hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5 )) +
+  scale_y_continuous(limits=c(0, 6), breaks=c(0,1,2,3,4,5)) 
+plot_02 
 
-#Maruchan noodles
-maruchan <- ramen_ratings %>% filter(brand=="Maruchan")
+################# 
+# Maruchan noodles - the old reliables
+################
 
-#Rating for maruchan noodles
-rating_maruchan <- maruchan %>% group_by(brand,style) %>% 
+#Which country has the best Maruchan noodles - scatterplot 
+maruchan <- ramen_ratings %>% filter(brand=="Maruchan") %>% 
+  group_by(brand,style, country) %>% 
   summarise(avg_rating = mean(stars))
+
 
 #Rating for country
 rating_maruchan_country <- maruchan %>% 
   mutate(rating_count = ifelse(review_number !="",1,0)) %>% 
                   group_by(brand,style,country) %>% 
                     summarise(avg_rating = mean(stars),
-                             rating_count = sum(rating_count))
+                             rating_count = sum(rating_count)) %>% 
+  
 
-# rating_country <- ramen_ratings %>% group_by(brand,style,country) %>% 
-#   summarise(avg_rating = mean(stars))
-# 
-# brand_country <- ramen_ratings %>% group_by(brand,style,country) %>% 
-#   summarise(avg_rating = mean(stars))
-
-
- ##### Plots
-style <- ggplot(rating_maruchan_country,aes(x = style, y = avg_rating,fill = style)) + 
-  geom_bar(stat = "identity", position = "dodge") + theme_minimal() +
-  facet_grid(~country)
+style <- ggplot(ranking_style,aes(x = style, y = avg_rating,fill = style)) + 
+geom_bar(stat = "identity", position = "dodge") + theme_minimal() +
+facet_grid(~country)
 
 
-country <- ggplot(ranking_country) +
-  geom_bar( aes(x=country, y=avg_rating), stat="identity", fill="skyblue", alpha=0.5) +
-  geom_errorbar( aes(x=country, ymin=min_rating, ymax=max_rating), width=0.4, colour="orange", alpha=0.9, size=1.3) +
-  coord_flip()
 
-country <- ggplot(ranking_country) +
-  geom_bar( aes(x=country, y=avg_rating), stat="identity", fill="black", alpha=0.5) +
-  geom_errorbar( aes(x=country, ymin=avg_rating-sd, ymax=avg_rating+sd), width=0.4, colour="orange", alpha=0.9, size=1.5) +
-  ggtitle("using standard deviation")+
-  coord_flip() + theme_minimal()
+
 
 
 
