@@ -69,7 +69,7 @@ ranking_style <- ramen_ratings %>% filter(country %in% universe) %>%
 plot_02 <- ggplot(ranking_style, aes(x=fct_reorder(style, -avg_rating), y=avg_rating)) + 
   geom_bar(stat="identity", width=.6,fill="steelblue") + 
   geom_text(aes(label=avg_rating),
-            position = position_stack(vjust = 1.1))+
+            position = position_stack(vjust = 1.05))+
   theme_minimal()+
   labs(title="Preferred Ramen Serving Style", 
        subtitle="(Limited to countries at or above median response threshold; N=11.5)", 
@@ -77,7 +77,7 @@ plot_02 <- ggplot(ranking_style, aes(x=fct_reorder(style, -avg_rating), y=avg_ra
        y = "Average Rating") + 
   theme(plot.title = element_text(face="bold",hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5 )) +
-  scale_y_continuous(limits=c(0, 6), breaks=c(0,1,2,3,4,5)) 
+  scale_y_continuous(limits=c(0, 5), breaks=c(0,1,2,3,4,5)) 
 plot_02 
 
 ################# 
@@ -86,22 +86,29 @@ plot_02
 
 #Which country has the best Maruchan noodles - scatterplot 
 maruchan <- ramen_ratings %>% filter(brand=="Maruchan") %>% 
-  group_by(brand,style, country) %>% 
-  summarise(avg_rating = mean(stars))
+  group_by(country) %>% 
+  summarise(avg_rating = mean(stars),
+            avg_rating = round(avg_rating,2))
 
+plot_03 <- maruchan %>% ggplot(aes(x = fct_reorder(country, avg_rating), y = avg_rating)) +
+  geom_bar(stat="identity", width=.6,fill="orange") +
+  geom_text(aes(label=avg_rating),
+            position = position_stack(vjust = 1.05))+
+  theme(legend.position = "top") + coord_flip()+
+  theme_minimal() +
+  scale_y_continuous(limits=c(0, 5), breaks=c(0,1,2,3,4,5))+
+  labs(title="Marachun Noodles", 
+       subtitle="Highest Rating by Country", 
+       x = "Country",
+       y = "Average Rating") + 
+  theme(plot.title = element_text(face="bold",hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5 )) 
+plot_03
 
-#Rating for country
-rating_maruchan_country <- maruchan %>% 
-  mutate(rating_count = ifelse(review_number !="",1,0)) %>% 
-                  group_by(brand,style,country) %>% 
-                    summarise(avg_rating = mean(stars),
-                             rating_count = sum(rating_count)) %>% 
+plot_01 <- ranking_country %>% 
+  ggplot(aes(x = fct_reorder(country, avg_rating), y = avg_rating)) +
+  theme_minimal()
   
-
-style <- ggplot(ranking_style,aes(x = style, y = avg_rating,fill = style)) + 
-geom_bar(stat = "identity", position = "dodge") + theme_minimal() +
-facet_grid(~country)
-
 
 
 
